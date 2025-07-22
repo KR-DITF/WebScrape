@@ -1,9 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
 import re
-
-
+import openpyxl
 import time
+
+## Excel atvēršana
+# WorkBook = openpyxl.load_workbook('Movies.xlsx')
+# ws = WorkBook.active
 
 ## pārgāju no IMDB uz Rotten Tomatoes
 
@@ -53,5 +56,12 @@ for ti in Bechdel:
 
 
 ## Filmu saraksts ar daudzumu
-print(BechdelList, len(BechdelList))
+# print(BechdelList, len(BechdelList))
 
+## Ierakstīju Excelī
+# for i in BechdelList:
+#     x = 1
+#     ws.cell(row = ws.max_row + 1, column = x).value = i
+#     x+=1
+
+# WorkBook.save('Movies.xlsx')
