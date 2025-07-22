@@ -1,36 +1,57 @@
 import requests
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
 import re
+
+
 import time
 
-# ImdbSite = "https://www.imdb.com/chart/top/"
+## pārgāju no IMDB uz Rotten Tomatoes
 
-# MovieList = []
-
-
-# driver = webdriver.Firefox()
-# driver.get(ImdbSite)
-# time.sleep(2)
+ImdbSite = 'https://editorial.rottentomatoes.com/guide/best-movies-of-all-time/'
 
 
-# for i in range(0,250):
-#     MovieTitles = driver.find_element(By.CLASS_NAME, "ipc-title__text ipc-title__text--reduced")
-#     MovieList.append(MovieTitles)
+MovieList = []
+BechdelList = []
 
-# driver.quit()
+PageImdb = requests.get(ImdbSite)
+ImdbSoup = BeautifulSoup(PageImdb.content, 'html.parser')
 
-# for i in MovieList:
-#     print(i)
+ImdbMovie = ImdbSoup.find_all('a', class_ = 'title')
 
-url = 'https://bechdeltest.com/'
+
+for Im in ImdbMovie:
+    raw_title = Im.get_text(strip = True)
+    clean_title = re.sub(r'^\d+\.\s*', '', raw_title)
+    MovieList.append(clean_title)
+
+
+## ŠĪ DAĻA STRĀDĀ
+
+url = 'https://bechdeltest.com/?list=all'
 page = requests.get(url)
 soup = BeautifulSoup(page.content, 'html.parser')
-if (Bechdel = soup.find_all(alt="[[3]]")):
-    Titles = soup.find_all(id=re.compile('movie-'))
+
+Bechdel = soup.find_all('div', class_='movie')
+
+Titles = soup.find_all(id=re.compile('movie-'))
 
 
-for ti in Titles:
-    print(ti.get_text())
+for ti in Bechdel:
+    ti_tag = ti.find(id = re.compile('movie-'))
+    img = ti.find('img')
+    rating = img['alt'] if img else 'N/A'
+
+    if ti_tag and rating == '[[3]]':
+        # print(f"{ti_tag.text.strip()} rating: {rating}")
+        
+
+        for i in MovieList:
+            # print(i, ti_tag.text.strip())
+            if ti_tag.text.strip() == i:
+                BechdelList.append(ti_tag.text.strip())
+                break
+
+
+## Filmu saraksts ar daudzumu
+print(BechdelList, len(BechdelList))
+
